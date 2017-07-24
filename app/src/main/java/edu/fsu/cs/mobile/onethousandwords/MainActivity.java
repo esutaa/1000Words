@@ -58,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements
         if (auth.getCurrentUser() == null) {
             fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance());
         }
+        else {
+            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance());
+        }
 
         fTransaction.commit();
 

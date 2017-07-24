@@ -20,6 +20,14 @@ public class ListFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static ListFragment newInstance() {
+        ListFragment fragment = new ListFragment();
+        Bundle args = new Bundle();
+
+        fragment.setArguments(args);
+        return fragment;
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
