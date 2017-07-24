@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
                 else {
                     ListFragment listFragment = new ListFragment();
                     String tag = ListFragment.class.getCanonicalName();
-                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, listFragment, tag).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, listFragment, tag).commit();
                 }
             }
         });
