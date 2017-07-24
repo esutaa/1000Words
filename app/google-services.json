@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1052634713589",
+    "firebase_url": "https://words-2f4bb.firebaseio.com",
+    "project_id": "words-2f4bb",
+    "storage_bucket": "words-2f4bb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1052634713589:android:9e467347aa5f76fa",
+        "android_client_info": {
+          "package_name": "edu.fsu.cs.mobile.onethousandwords"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1052634713589-ldeaa3a89dirb4nt63a8do410b4ckc0d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYjtChx5FfdJO6Owbpbs6EuKmf5c2yWtI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
