@@ -56,10 +56,10 @@ public class MainActivity extends AppCompatActivity implements
 
         //Check if user is logged in
         if (auth.getCurrentUser() == null) {
-            fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance()).addToBackStack("Login");
+            fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance());
         }
         else {
-            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance()).addToBackStack("List");
+            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance());
         }
 
         fTransaction.commit();
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(task.isSuccessful()) {
                             ListFragment listFragment = new ListFragment();
                             String tag = ListFragment.class.getCanonicalName();
-                            getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame,
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame,
                                     listFragment, tag).commit();
                         }
 
