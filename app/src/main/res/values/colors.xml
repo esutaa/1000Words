@@ -7,4 +7,5 @@
     <color name="whitebg">#FFFFFFFF</color>
     <color name="darkgray">#FF999999</color>
     <color name="a">#00000000</color>
+    <color name="gray">#FF666666</color>
 </resources>
