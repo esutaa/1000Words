@@ -1,6 +1,7 @@
 package edu.fsu.cs.mobile.onethousandwords;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 /**
@@ -22,9 +24,19 @@ public class LoginFragment extends Fragment {
     private Button LOGIN;
     private TextView CREATE;
 
+    private OnButtonClickListener bcl;
 
-    public LoginFragment() {
+
+    public LoginFragment () {
         // Required empty public constructor
+    }
+
+    public static LoginFragment newInstance() {
+        LoginFragment fragment = new LoginFragment();
+        Bundle args = new Bundle();
+
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
@@ -41,13 +53,21 @@ public class LoginFragment extends Fragment {
         LOGIN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (EMAIL.getText().toString().trim().equals("") || PASSWORD.getText().toString().trim().equals("")) {
+                    if (EMAIL.getText().toString().trim().equals("")) {
+                        EMAIL.setError("Please enter your email");
+                    }
 
-                DrawingFragment drawingFragment = new DrawingFragment();
-                String tag = DrawingFragment.class.getCanonicalName();
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_frame, drawingFragment, tag)
-                        .addToBackStack("login")
-                        .commit();
+                    if (PASSWORD.getText().toString().trim().equals("")) {
+                        PASSWORD.setError("Please enter a password");
+                    }
+
+                    Toast.makeText(getActivity(), "One or more field is empty", Toast.LENGTH_SHORT).show();
+                }
+
+                else{
+                    bcl.onButtonClicked(v, EMAIL.getText().toString(), PASSWORD.getText().toString());
+                }
             }
         });
 
@@ -69,4 +89,27 @@ public class LoginFragment extends Fragment {
         return rootView;
     }
 
+    // This calls to send information from Login Fragment to MainActivity
+    public interface OnButtonClickListener {
+        void onButtonClicked(View button, String email, String password);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnButtonClickListener) {
+            bcl = (OnButtonClickListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnLoginListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        bcl = null;
+    }
+
+    //TODO: Make validation forms
 }
