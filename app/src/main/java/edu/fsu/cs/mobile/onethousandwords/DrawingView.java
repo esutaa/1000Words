@@ -1,5 +1,6 @@
 package edu.fsu.cs.mobile.onethousandwords;
 
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -59,7 +60,8 @@ public class DrawingView extends View{
                 return false;
         }
 
-       return true;
+        invalidate();
+        return true;
     }
 
     public void setupDrawing() {
@@ -69,12 +71,18 @@ public class DrawingView extends View{
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(20);
         drawPaint.setStyle(Paint.Style.STROKE);
+        drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
 
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
+    public void setColor(String newColor){
+        invalidate();
 
+        paintColor = Color.parseColor(newColor);
+        drawPaint.setColor(paintColor);
+    }
 
 
 }
