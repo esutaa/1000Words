@@ -56,10 +56,10 @@ public class MainActivity extends AppCompatActivity implements
 
         //Check if user is logged in
         if (auth.getCurrentUser() == null) {
-            fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance());
+            fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance()).addToBackStack("Login");
         }
         else {
-            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance());
+            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance()).addToBackStack("List");
         }
 
         fTransaction.commit();
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
                 else {
                     ListFragment listFragment = new ListFragment();
                     String tag = ListFragment.class.getCanonicalName();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, listFragment, tag).commit();
+                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, listFragment, tag).commit();
                 }
             }
         });
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(task.isSuccessful()) {
                             ListFragment listFragment = new ListFragment();
                             String tag = ListFragment.class.getCanonicalName();
-                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame,
+                            getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame,
                                     listFragment, tag).commit();
                         }
 
@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         LoginFragment loginFragment = new LoginFragment();
         String tag = DrawingFragment.class.getCanonicalName();
         this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, loginFragment, tag)
+                .add(R.id.fragment_frame, loginFragment, tag)
                 .addToBackStack("Login")
                 .commit();
     }

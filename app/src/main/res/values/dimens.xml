@@ -2,11 +2,13 @@
 <resources>
 
     <dimen name="small_brush">10dp</dimen>
-    <integer name="small_size">10</integer>
+    <integer name="small_size">4</integer>
     <dimen name="medium_brush">20dp</dimen>
-    <integer name="medium_size">20</integer>
-    <dimen name="large_brush">30dp</dimen>
-    <integer name="large_size">30</integer>
+    <integer name="medium_size">10</integer>
+    <dimen name="large_brush">40dp</dimen>
+    <integer name="large_size">26</integer>
+    <dimen name="medium2_brush">30dp</dimen>
+    <integer name="med2_size">18</integer>
 
 
 </resources>

@@ -12,24 +12,17 @@
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:orientation="horizontal">
+
         <Button
-            android:id="@+id/save_btn"
+            android:id="@+id/new_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save" />
-
+            android:text="@string/newDraw" />
         <Button
             android:id="@+id/brush_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/brush" />
-
-        <Button
-            android:id="@+id/draw_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/draw" />
-
         <Button
             android:id="@+id/erase_btn"
             android:layout_width="wrap_content"
@@ -119,6 +112,12 @@
                 android:contentDescription="@string/paint"
                 android:src="@drawable/paint"
                 android:tag="#FF009999" />
+
+            <Button
+                android:id="@+id/back_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/back" />
         </LinearLayout>
 
         <LinearLayout
@@ -184,6 +183,12 @@
                 android:contentDescription="@string/paint"
                 android:src="@drawable/paint"
                 android:tag="#FF000000" />
+
+            <Button
+                android:id="@+id/save_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save" />
         </LinearLayout>
     </LinearLayout>
 
