@@ -41,7 +41,7 @@ public class ListFragment extends Fragment {
                 DrawingFragment fragment = new DrawingFragment();
                 String tag = DrawingFragment.class.getCanonicalName();
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_frame, fragment, tag).commit();
+                        .replace(R.id.fragment_frame, fragment, tag).addToBackStack("Drawing").commit();
             }
         });
 

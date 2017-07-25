@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
         LoginFragment loginFragment = new LoginFragment();
         String tag = DrawingFragment.class.getCanonicalName();
         this.getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_frame, loginFragment, tag)
+                .add(R.id.fragment_frame, loginFragment, tag)
                 .addToBackStack("Login")
                 .commit();
     }

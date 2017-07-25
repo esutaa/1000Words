@@ -17,8 +17,13 @@
     <string name="brush">Brush</string>
     <string name="erase">Erase</string>
     <string name="save">Save</string>
-    <string name="draw">Draw</string>
+    <string name="newDraw">New</string>
+    <string name="back">Back</string>
     <string name="paint">Paint</string>
+    <string name="s">Smallest</string>
+    <string name="m">Small</string>
+    <string name="m2">Medium</string>
+    <string name="l">Large</string>
     <string name="logout">Logout</string>
     
 </resources>
