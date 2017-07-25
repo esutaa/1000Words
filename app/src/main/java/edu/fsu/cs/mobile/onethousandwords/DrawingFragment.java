@@ -1,7 +1,10 @@
 package edu.fsu.cs.mobile.onethousandwords;
 
 
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
@@ -11,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import java.io.IOException;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,6 +23,12 @@ import android.widget.LinearLayout;
 public class DrawingFragment extends Fragment implements View.OnClickListener{
     private DrawingView drawingView;
     private ImageButton currentPaint;
+    private MediaPlayer mediaPlayer;
+    private MediaRecorder mediaRecorder;
+    private boolean playing = true;
+    private ImageButton record;
+    private ImageButton play;
+    private String savePath = null;
     private ImageButton b1;
     private ImageButton b2;
     private ImageButton b3;
@@ -44,8 +55,56 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         drawingView = (DrawingView) rootView.findViewById(R.id.draw);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.brush_color);
         currentPaint = (ImageButton) layout.getChildAt(0);
+        record = (ImageButton) rootView.findViewById(R.id.record_btn);
+        play = (ImageButton) rootView.findViewById(R.id.play_btn);
 
         currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
+
+        record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (playing) {
+                    record.setImageResource(R.drawable.stop);
+                    savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+                    mediaRecorder = new MediaRecorder();
+                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                    mediaRecorder.setOutputFile(savePath);
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                else {
+                    record.setImageResource(R.drawable.record);
+                    mediaRecorder.stop();
+                }
+
+                playing = !playing;
+            }
+        });
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(savePath);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mediaPlayer.start();
+            }
+        });
 
         b1 = (ImageButton) rootView.findViewById(R.id.c1);
         b1.setOnClickListener(this);
