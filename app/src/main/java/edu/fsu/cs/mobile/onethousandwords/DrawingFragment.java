@@ -46,7 +46,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b10;
     private ImageButton b11;
     private ImageButton b12;
-    private Button brushBtn, eraseBtn, newBtn, backBtn;
+    private ImageButton brushBtn, eraseBtn, newBtn;
+    Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
     //ImageButton smallBtn, medBtn, med2Btn, lgBtn;
     
@@ -139,11 +140,11 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         b12 = (ImageButton) rootView.findViewById(R.id.c12);
         b12.setOnClickListener(this);
 
-        brushBtn = (Button) rootView.findViewById(R.id.brush_btn);
+        brushBtn = (ImageButton) rootView.findViewById(R.id.brush_btn);
         brushBtn.setOnClickListener(this);
-        eraseBtn = (Button) rootView.findViewById(R.id.erase_btn);
+        eraseBtn = (ImageButton) rootView.findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
-        newBtn = (Button) rootView.findViewById(R.id.new_btn);
+        newBtn = (ImageButton) rootView.findViewById(R.id.draw_btn);
         newBtn.setOnClickListener(this);
         backBtn = (Button) rootView.findViewById(R.id.back_btn);
         backBtn.setOnClickListener(this);
@@ -162,7 +163,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         //update color
         if ((v != currentPaint) && (v.getId() != R.id.brush_btn) && (v.getId() != R.id.erase_btn)
-                && (v.getId() != R.id.new_btn) && (v.getId() != R.id.back_btn)){
+                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn)){
             drawingView.setErase(false);
             drawingView.setBrushSize(drawingView.getOldBrushSize());
             ImageButton img = (ImageButton) v;
@@ -273,7 +274,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
             brushDialog.show();
         }
-        else if (v.getId() == R.id.new_btn){
+        else if (v.getId() == R.id.draw_btn){
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
             alertDialog.setTitle("New Drawing").setMessage("Discard Changes?");
             alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
