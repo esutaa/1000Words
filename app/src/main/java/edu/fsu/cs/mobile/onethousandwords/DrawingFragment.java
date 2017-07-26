@@ -87,33 +87,36 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View view) {
 
-                if (playing) {
-                    record.setImageResource(R.drawable.stop);
-                    savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
-                            CreateRandomAudioFileName(5) + "Recording.3gp";
+                if (permission()) {
+                    if (playing) {
+                        record.setImageResource(R.drawable.stop);
+                        savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                                CreateRandomAudioFileName(5) + "Recording.3gp";
 
-                    mediaRecorder = new MediaRecorder();
-                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                    mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-                    mediaRecorder.setOutputFile(savePath);
+                        mediaRecorder = new MediaRecorder();
+                        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                        mediaRecorder.setOutputFile(savePath);
 
-                    try {
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        try {
+                            mediaRecorder.prepare();
+                            mediaRecorder.start();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        record.setImageResource(R.drawable.record);
+                        mediaRecorder.stop();
                     }
-                }
 
+                    playing = !playing;
+                }
                 else {
-                    record.setImageResource(R.drawable.record);
-                    mediaRecorder.stop();
+                    requestPermission();
                 }
-
-                playing = !playing;
             }
         });
 
@@ -169,7 +172,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
         smallBrush = getResources().getInteger(R.integer.small_size);
         medBrush = getResources().getInteger(R.integer.medium_size);
-        //medBrush2 = getResources().getInteger(R.integer.med2_size);
+        medBrush2 = getResources().getInteger(R.integer.med2_size);
         lgBrush = getResources().getInteger(R.integer.large_size);
 
         drawingView.setBrushSize(medBrush);
@@ -400,6 +403,21 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             i++ ;
         }
         return stringBuilder.toString();
+    }
+
+    public boolean permission(){
+        int res1 = ContextCompat.checkSelfPermission(getContext(),
+                "android.permission.WRITE_EXTERNAL_STORAGE");
+        int res2 = ContextCompat.checkSelfPermission(getContext(),
+                "android.permission.RECORD_AUDIO");
+
+        return (res1 == PackageManager.PERMISSION_GRANTED) && (res2 == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.RECORD_AUDIO"},
+                36);
     }
 
 }
