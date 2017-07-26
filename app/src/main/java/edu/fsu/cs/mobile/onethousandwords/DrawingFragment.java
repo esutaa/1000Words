@@ -23,6 +23,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
@@ -57,9 +59,10 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     //private Button brushBtn, eraseBtn, newBtn, backBtn;
   
     private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
-    Button backBtn;
+    Button backBtn, logoutBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
     String savedImg;
+    FirebaseAuth auth;
     //ImageButton smallBtn, medBtn, med2Btn, lgBtn;
     
     public DrawingFragment() {
@@ -72,6 +75,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_drawing, container, false);
 
+        auth = FirebaseAuth.getInstance();
         drawingView = (DrawingView) rootView.findViewById(R.id.draw);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.brush_color);
         currentPaint = (ImageButton) layout.getChildAt(0);
@@ -169,6 +173,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         backBtn.setOnClickListener(this);
         saveBtn = (ImageButton) rootView.findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
+        logoutBtn = (Button) rootView.findViewById(R.id.logout_btn);
+        logoutBtn.setOnClickListener(this);
 
         smallBrush = getResources().getInteger(R.integer.small_size);
         medBrush = getResources().getInteger(R.integer.medium_size);
@@ -184,7 +190,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         //update color
         if ((v != currentPaint) && (v.getId() != R.id.brush_btn) && (v.getId() != R.id.erase_btn)
-                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn) && (v.getId() != R.id.save_btn)){
+                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn) && (v.getId() != R.id.save_btn)
+                && (v.getId() != R.id.logout_btn)){
             drawingView.setErase(false);
             drawingView.setBrushSize(drawingView.getOldBrushSize());
             ImageButton img = (ImageButton) v;
@@ -378,6 +385,29 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
                     else {
                         Toast.makeText(getActivity(), "Uh oh! Image not saved. :(", Toast.LENGTH_SHORT).show();
                     }
+                }
+            });
+
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            alertDialog.show();
+        }
+
+        else if (v.getId() == R.id.logout_btn) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("").setMessage("Go back and discard changes?");
+            alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    auth.signOut();
+                    LoginFragment loginFragment = new LoginFragment();
+                    String tag = LoginFragment.class.getCanonicalName();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_frame, loginFragment, tag).commit();
                 }
             });
 
