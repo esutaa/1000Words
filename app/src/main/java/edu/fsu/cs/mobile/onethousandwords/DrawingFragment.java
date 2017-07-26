@@ -4,8 +4,13 @@ package edu.fsu.cs.mobile.onethousandwords;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +28,7 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,9 +56,11 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b10;
     private ImageButton b11;
     private ImageButton b12;
-    private ImageButton brushBtn, eraseBtn, newBtn;
+    //private Button brushBtn, eraseBtn, newBtn, backBtn;
+    private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
     Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
+    String savedImg;
     //ImageButton smallBtn, medBtn, med2Btn, lgBtn;
     
     public DrawingFragment() {
@@ -155,6 +163,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         newBtn.setOnClickListener(this);
         backBtn = (Button) rootView.findViewById(R.id.back_btn);
         backBtn.setOnClickListener(this);
+        saveBtn = (ImageButton) rootView.findViewById(R.id.save_btn);
+        saveBtn.setOnClickListener(this);
 
         smallBrush = getResources().getInteger(R.integer.small_size);
         medBrush = getResources().getInteger(R.integer.medium_size);
@@ -170,7 +180,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         //update color
         if ((v != currentPaint) && (v.getId() != R.id.brush_btn) && (v.getId() != R.id.erase_btn)
-                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn)){
+                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn) && (v.getId() != R.id.save_btn)){
             drawingView.setErase(false);
             drawingView.setBrushSize(drawingView.getOldBrushSize());
             ImageButton img = (ImageButton) v;
@@ -322,6 +332,61 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             alertDialog.show();
         }
 
+        // Save button saves file to gallery
+        else if (v.getId() == R.id.save_btn) {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+            alertDialog.setTitle("").setMessage("Would you like to save your work?");
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (ContextCompat.checkSelfPermission(getContext(),
+                            "android.permission.WRITE_EXTERNAL_STORAGE")
+                            == PackageManager.PERMISSION_GRANTED) {
+                        savedImg = getUri();
+                    }
+                    else {
+                        ActivityCompat.requestPermissions(getActivity(),
+                                new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"},
+                                36);
+                        if (ContextCompat.checkSelfPermission(getContext(),
+                                "android.permission.WRITE_EXTERNAL_STORAGE")
+                                == PackageManager.PERMISSION_GRANTED) {
+
+                            savedImg = getUri();
+                        }
+                        else {
+                            Toast.makeText(getContext(), "Please enable permissions to save file.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    if(savedImg != null) {
+                        Toast.makeText(getActivity(), "Drawing saved!", Toast.LENGTH_SHORT).show();
+                        drawingView.destroyDrawingCache();
+                    }
+
+                    else {
+                        Toast.makeText(getActivity(), "Uh oh! Image not saved. :(", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            alertDialog.show();
+        }
+    }
+
+    public String getUri() {
+        drawingView.setDrawingCacheEnabled(true);
+
+        return MediaStore.Images.Media.insertImage(
+                getActivity().getContentResolver(), drawingView.getDrawingCache(),
+                UUID.randomUUID().toString()+".png", "1000Words");
     }
 
     public String CreateRandomAudioFileName(int string){

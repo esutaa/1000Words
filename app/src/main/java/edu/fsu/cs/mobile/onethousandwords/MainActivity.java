@@ -35,22 +35,6 @@ public class MainActivity extends AppCompatActivity implements
 
         auth = FirebaseAuth.getInstance();
 
-        GoogleSignInOptions gso = new
-                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        gac = new GoogleApiClient.Builder(this)
-                .enableAutoManage(MainActivity.this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(MainActivity.this, "CONNECTION FAILED", Toast.LENGTH_SHORT).show();
-                    }
-                } /* OnConnectionFailedListener*/)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction fTransaction = manager.beginTransaction();
 

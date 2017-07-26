@@ -110,6 +110,4 @@ public class LoginFragment extends Fragment {
         super.onDetach();
         bcl = null;
     }
-
-    //TODO: Make validation forms
 }
