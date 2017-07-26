@@ -18,9 +18,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +36,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton record;
     private ImageButton play;
     private String savePath = null;
+    private Random random;
+    private String RandomAudioFileName = "asdfasd";
     private ImageButton b1;
     private ImageButton b2;
     private ImageButton b3;
@@ -66,6 +70,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         currentPaint = (ImageButton) layout.getChildAt(0);
         record = (ImageButton) rootView.findViewById(R.id.record_btn);
         play = (ImageButton) rootView.findViewById(R.id.play_btn);
+        random = new Random();
 
         currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
 
@@ -75,7 +80,9 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
                 if (playing) {
                     record.setImageResource(R.drawable.stop);
-                    savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+                    savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                            CreateRandomAudioFileName(5) + "Recording.3gp";
+
                     mediaRecorder = new MediaRecorder();
                     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
@@ -151,7 +158,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
         smallBrush = getResources().getInteger(R.integer.small_size);
         medBrush = getResources().getInteger(R.integer.medium_size);
-        medBrush2 = getResources().getInteger(R.integer.med2_size);
+        //medBrush2 = getResources().getInteger(R.integer.med2_size);
         lgBrush = getResources().getInteger(R.integer.large_size);
 
         drawingView.setBrushSize(medBrush);
@@ -315,6 +322,18 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             alertDialog.show();
         }
 
+    }
+
+    public String CreateRandomAudioFileName(int string){
+        StringBuilder stringBuilder = new StringBuilder( string );
+        int i = 0 ;
+        while(i < string ) {
+            stringBuilder.append(RandomAudioFileName.
+                    charAt(random.nextInt(RandomAudioFileName.length())));
+
+            i++ ;
+        }
+        return stringBuilder.toString();
     }
 
 }
