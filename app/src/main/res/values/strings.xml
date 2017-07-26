@@ -2,7 +2,7 @@
     <string name="app_name">One Thousand Words</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Hello. Im the ListView. I havent been implemented yet, but you look great today! :)</string>
     <string name="email">Email</string>
     <string name="email_hint">Your Email</string>
     <string name="password">Password</string>
@@ -25,5 +25,6 @@
     <string name="m2">Medium</string>
     <string name="l">Large</string>
     <string name="logout">Logout</string>
-    
+    <string name="logout_btn">Logout</string>
+
 </resources>
