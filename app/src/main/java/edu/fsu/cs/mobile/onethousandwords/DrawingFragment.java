@@ -53,8 +53,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b10;
     private ImageButton b11;
     private ImageButton b12;
-    private Button brushBtn, eraseBtn, newBtn, backBtn, saveBtn;
-    private ImageButton brushBtn, eraseBtn, newBtn;
+    private Button brushBtn, eraseBtn, newBtn, backBtn;
+    private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
     Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
     String savedImg;
@@ -157,7 +157,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         newBtn.setOnClickListener(this);
         backBtn = (Button) rootView.findViewById(R.id.back_btn);
         backBtn.setOnClickListener(this);
-        saveBtn = (Button) rootView.findViewById(R.id.save_btn);
+        saveBtn = (ImageButton) rootView.findViewById(R.id.save_btn);
         saveBtn.setOnClickListener(this);
 
         smallBrush = getResources().getInteger(R.integer.small_size);
