@@ -80,6 +80,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         record = (ImageButton) rootView.findViewById(R.id.record_btn);
         play = (ImageButton) rootView.findViewById(R.id.play_btn);
         random = new Random();
+        play.setEnabled(false);
 
         currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
 
@@ -89,6 +90,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
                 if (permission()) {
                     if (playing) {
+                        play.setEnabled(true);
                         record.setImageResource(R.drawable.stop);
                         savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
                                 CreateRandomAudioFileName(5) + "Recording.3gp";
