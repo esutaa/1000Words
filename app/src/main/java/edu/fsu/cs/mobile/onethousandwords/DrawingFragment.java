@@ -53,7 +53,6 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b10;
     private ImageButton b11;
     private ImageButton b12;
-    private Button brushBtn, eraseBtn, newBtn, backBtn;
     private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
     Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
