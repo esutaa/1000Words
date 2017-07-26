@@ -1,6 +1,8 @@
 package edu.fsu.cs.mobile.onethousandwords;
 
 
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
@@ -9,6 +11,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -22,10 +25,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,6 +35,12 @@ import java.util.UUID;
 public class DrawingFragment extends Fragment implements View.OnClickListener{
     private DrawingView drawingView;
     private ImageButton currentPaint;
+    private MediaPlayer mediaPlayer;
+    private MediaRecorder mediaRecorder;
+    private boolean playing = true;
+    private ImageButton record;
+    private ImageButton play;
+    private String savePath = null;
     private ImageButton b1;
     private ImageButton b2;
     private ImageButton b3;
@@ -46,6 +54,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b11;
     private ImageButton b12;
     private Button brushBtn, eraseBtn, newBtn, backBtn, saveBtn;
+    private ImageButton brushBtn, eraseBtn, newBtn;
+    Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
     String savedImg;
     //ImageButton smallBtn, medBtn, med2Btn, lgBtn;
@@ -63,8 +73,56 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         drawingView = (DrawingView) rootView.findViewById(R.id.draw);
         LinearLayout layout = (LinearLayout) rootView.findViewById(R.id.brush_color);
         currentPaint = (ImageButton) layout.getChildAt(0);
+        record = (ImageButton) rootView.findViewById(R.id.record_btn);
+        play = (ImageButton) rootView.findViewById(R.id.play_btn);
 
         currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
+
+        record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (playing) {
+                    record.setImageResource(R.drawable.stop);
+                    savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
+                    mediaRecorder = new MediaRecorder();
+                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                    mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                    mediaRecorder.setOutputFile(savePath);
+
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                else {
+                    record.setImageResource(R.drawable.record);
+                    mediaRecorder.stop();
+                }
+
+                playing = !playing;
+            }
+        });
+
+        play.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer = new MediaPlayer();
+                try {
+                    mediaPlayer.setDataSource(savePath);
+                    mediaPlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                mediaPlayer.start();
+            }
+        });
 
         b1 = (ImageButton) rootView.findViewById(R.id.c1);
         b1.setOnClickListener(this);
@@ -91,11 +149,11 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         b12 = (ImageButton) rootView.findViewById(R.id.c12);
         b12.setOnClickListener(this);
 
-        brushBtn = (Button) rootView.findViewById(R.id.brush_btn);
+        brushBtn = (ImageButton) rootView.findViewById(R.id.brush_btn);
         brushBtn.setOnClickListener(this);
-        eraseBtn = (Button) rootView.findViewById(R.id.erase_btn);
+        eraseBtn = (ImageButton) rootView.findViewById(R.id.erase_btn);
         eraseBtn.setOnClickListener(this);
-        newBtn = (Button) rootView.findViewById(R.id.new_btn);
+        newBtn = (ImageButton) rootView.findViewById(R.id.draw_btn);
         newBtn.setOnClickListener(this);
         backBtn = (Button) rootView.findViewById(R.id.back_btn);
         backBtn.setOnClickListener(this);
@@ -116,7 +174,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         //update color
         if ((v != currentPaint) && (v.getId() != R.id.brush_btn) && (v.getId() != R.id.erase_btn)
-                && (v.getId() != R.id.new_btn) && (v.getId() != R.id.back_btn) && (v.getId() != R.id.save_btn)){
+                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn) && (v.getId() != R.id.save_btn)){
             drawingView.setErase(false);
             drawingView.setBrushSize(drawingView.getOldBrushSize());
             ImageButton img = (ImageButton) v;
@@ -227,7 +285,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
             brushDialog.show();
         }
-        else if (v.getId() == R.id.new_btn){
+        else if (v.getId() == R.id.draw_btn){
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
             alertDialog.setTitle("New Drawing").setMessage("Discard Changes?");
             alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
