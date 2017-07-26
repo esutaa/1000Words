@@ -4,10 +4,8 @@ package edu.fsu.cs.mobile.onethousandwords;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -57,7 +55,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b11;
     private ImageButton b12;
     //private Button brushBtn, eraseBtn, newBtn, backBtn;
-
+  
     private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
     Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
@@ -198,6 +196,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             currentPaint = (ImageButton) v;
         }
 
+        // Checking for which buttons were used
         if (v.getId() == R.id.brush_btn)
         {
             final Dialog brushDialog = new Dialog(getActivity());
@@ -345,11 +344,13 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    // Checking to see if user already gave permission
                     if (ContextCompat.checkSelfPermission(getContext(),
                             "android.permission.WRITE_EXTERNAL_STORAGE")
                             == PackageManager.PERMISSION_GRANTED) {
                         savedImg = getUri();
                     }
+                    // Asking user to have permission to save files to gallery
                     else {
                         ActivityCompat.requestPermissions(getActivity(),
                                 new String[]{"android.permission.WRITE_EXTERNAL_STORAGE"},
@@ -357,17 +358,21 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
                         if (ContextCompat.checkSelfPermission(getContext(),
                                 "android.permission.WRITE_EXTERNAL_STORAGE")
                                 == PackageManager.PERMISSION_GRANTED) {
-
                             savedImg = getUri();
                         }
+                        // If not allowed, tell user to enable permission
                         else {
                             Toast.makeText(getContext(), "Please enable permissions to save file.", Toast.LENGTH_SHORT).show();
                         }
                     }
 
+                    // Displaying to user if file was saved successfully
                     if(savedImg != null) {
+                        /*StorageReference storageRef = FirebaseStorage.getReference().child("Users").
+                            child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                        storageRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).putFile(savedImg);*/
                         Toast.makeText(getActivity(), "Drawing saved!", Toast.LENGTH_SHORT).show();
-                        drawingView.destroyDrawingCache();
+                        drawingView.destroyDrawingCache();  // Deleting cache so cache not the same for future files
                     }
 
                     else {
@@ -387,6 +392,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    // Function gets URI of file
     public String getUri() {
         drawingView.setDrawingCacheEnabled(true);
 
