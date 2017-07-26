@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -39,6 +40,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton record;
     private ImageButton play;
     private String savePath = null;
+    private Random random;
+    private String RandomAudioFileName = "asdfasd";
     private ImageButton b1;
     private ImageButton b2;
     private ImageButton b3;
@@ -51,6 +54,8 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton b10;
     private ImageButton b11;
     private ImageButton b12;
+    //private Button brushBtn, eraseBtn, newBtn, backBtn;
+  
     private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
     Button backBtn;
     private float smallBrush, medBrush, medBrush2, lgBrush;
@@ -72,6 +77,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         currentPaint = (ImageButton) layout.getChildAt(0);
         record = (ImageButton) rootView.findViewById(R.id.record_btn);
         play = (ImageButton) rootView.findViewById(R.id.play_btn);
+        random = new Random();
 
         currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
 
@@ -79,31 +85,36 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View view) {
 
-                if (playing) {
-                    record.setImageResource(R.drawable.stop);
-                    savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/";
-                    mediaRecorder = new MediaRecorder();
-                    mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-                    mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-                    mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-                    mediaRecorder.setOutputFile(savePath);
+                if (permission()) {
+                    if (playing) {
+                        record.setImageResource(R.drawable.stop);
+                        savePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" +
+                                CreateRandomAudioFileName(5) + "Recording.3gp";
 
-                    try {
-                        mediaRecorder.prepare();
-                        mediaRecorder.start();
-                    } catch (IllegalStateException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        mediaRecorder = new MediaRecorder();
+                        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+                        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+                        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+                        mediaRecorder.setOutputFile(savePath);
+
+                        try {
+                            mediaRecorder.prepare();
+                            mediaRecorder.start();
+                        } catch (IllegalStateException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        record.setImageResource(R.drawable.record);
+                        mediaRecorder.stop();
                     }
-                }
 
+                    playing = !playing;
+                }
                 else {
-                    record.setImageResource(R.drawable.record);
-                    mediaRecorder.stop();
+                    requestPermission();
                 }
-
-                playing = !playing;
             }
         });
 
@@ -386,6 +397,33 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         return MediaStore.Images.Media.insertImage(
                 getActivity().getContentResolver(), drawingView.getDrawingCache(),
                 UUID.randomUUID().toString()+".png", "1000Words");
+    }
+
+    public String CreateRandomAudioFileName(int string){
+        StringBuilder stringBuilder = new StringBuilder( string );
+        int i = 0 ;
+        while(i < string ) {
+            stringBuilder.append(RandomAudioFileName.
+                    charAt(random.nextInt(RandomAudioFileName.length())));
+
+            i++ ;
+        }
+        return stringBuilder.toString();
+    }
+
+    public boolean permission(){
+        int res1 = ContextCompat.checkSelfPermission(getContext(),
+                "android.permission.WRITE_EXTERNAL_STORAGE");
+        int res2 = ContextCompat.checkSelfPermission(getContext(),
+                "android.permission.RECORD_AUDIO");
+
+        return (res1 == PackageManager.PERMISSION_GRANTED) && (res2 == PackageManager.PERMISSION_GRANTED);
+    }
+
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(getActivity(),
+                new String[]{"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.RECORD_AUDIO"},
+                36);
     }
 
 }
