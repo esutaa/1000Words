@@ -35,31 +35,15 @@ public class MainActivity extends AppCompatActivity implements
 
         auth = FirebaseAuth.getInstance();
 
-        GoogleSignInOptions gso = new
-                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        gac = new GoogleApiClient.Builder(this)
-                .enableAutoManage(MainActivity.this, new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        Toast.makeText(MainActivity.this, "CONNECTION FAILED", Toast.LENGTH_SHORT).show();
-                    }
-                } /* OnConnectionFailedListener*/)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction fTransaction = manager.beginTransaction();
 
         //Check if user is logged in
         if (auth.getCurrentUser() == null) {
-            fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance()).addToBackStack("Login");
+            fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance());
         }
         else {
-            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance()).addToBackStack("List");
+            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance());
         }
 
         fTransaction.commit();
@@ -93,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements
                 else {
                     ListFragment listFragment = new ListFragment();
                     String tag = ListFragment.class.getCanonicalName();
-                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame, listFragment, tag).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, listFragment, tag).commit();
                 }
             }
         });
@@ -109,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements
                         if(task.isSuccessful()) {
                             ListFragment listFragment = new ListFragment();
                             String tag = ListFragment.class.getCanonicalName();
-                            getSupportFragmentManager().beginTransaction().add(R.id.fragment_frame,
+                            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame,
                                     listFragment, tag).commit();
                         }
 
