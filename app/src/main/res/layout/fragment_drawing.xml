@@ -75,11 +75,6 @@
             android:id="@+id/draw"
             android:layout_weight="0.95" />
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:maxHeight="10dp">
-
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -157,6 +152,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/back" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -223,9 +219,14 @@
                     android:contentDescription="@string/paint"
                     android:src="@drawable/paint"
                     android:tag="#FF000000" />
+
+                <Button
+                    android:id="@+id/logout_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/logout_btn" />
             </LinearLayout>
         </LinearLayout>
-    </ScrollView>
 
 </LinearLayout>
 
