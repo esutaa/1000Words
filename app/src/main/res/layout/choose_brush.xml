@@ -11,7 +11,7 @@
         android:layout_height="0dp"
         android:id="@+id/small"
         android:layout_weight="1"
-        android:contentDescription="@string/s"
+        android:contentDescription="@string/smallest"
         android:src="@drawable/small"/>
 
     <ImageButton
@@ -19,7 +19,7 @@
         android:layout_height="0dp"
         android:id="@+id/medium"
         android:layout_weight="1"
-        android:contentDescription="@string/m"
+        android:contentDescription="@string/small"
         android:src="@drawable/medium"/>
 
     <ImageButton
@@ -27,7 +27,7 @@
         android:layout_height="0dp"
         android:id="@+id/medium2"
         android:layout_weight="1"
-        android:contentDescription="@string/m2"
+        android:contentDescription="@string/medium"
         android:src="@drawable/medium2"/>
 
     <ImageButton
@@ -35,6 +35,6 @@
         android:layout_height="0dp"
         android:id="@+id/large"
         android:layout_weight="1"
-        android:contentDescription="@string/l"
+        android:contentDescription="@string/large"
         android:src="@drawable/large"/>
 </LinearLayout>
