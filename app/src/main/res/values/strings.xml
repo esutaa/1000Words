@@ -26,5 +26,6 @@
     <string name="l">Large</string>
     <string name="logout">Logout</string>
     <string name="logout_btn">Logout</string>
+    <string name="upload">Upload</string>
 
 </resources>

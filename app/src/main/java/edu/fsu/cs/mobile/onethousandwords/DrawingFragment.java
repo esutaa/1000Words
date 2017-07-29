@@ -1,11 +1,17 @@
 package edu.fsu.cs.mobile.onethousandwords;
 
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
@@ -15,7 +21,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +36,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
+import static android.R.attr.data;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +52,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton play;
     private String savePath = null;
     private Random random;
+    private Button upload;
     private String RandomAudioFileName = "asdfasd";
     private ImageButton b1;
     private ImageButton b2;
@@ -77,6 +89,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         currentPaint = (ImageButton) layout.getChildAt(0);
         record = (ImageButton) rootView.findViewById(R.id.record_btn);
         play = (ImageButton) rootView.findViewById(R.id.play_btn);
+        upload = (Button) rootView.findViewById(R.id.upload_btn);
         random = new Random();
         play.setEnabled(false);
 
@@ -134,6 +147,16 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
+            }
+        });
+
         b1 = (ImageButton) rootView.findViewById(R.id.c1);
         b1.setOnClickListener(this);
         b2 = (ImageButton) rootView.findViewById(R.id.c2);
@@ -178,6 +201,30 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         drawingView.setBrushSize(medBrush);
         // Inflate the layout for this fragment
         return rootView;
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            String path = getPathFromCameraData(data, this.getActivity());
+            Log.i("PICTURE", "Path: " + path);
+            if (path != null) {
+                Toast.makeText(getContext(), path, Toast.LENGTH_LONG).show();
+                Drawable photo = Drawable.createFromPath(path);
+                drawingView.setBackgroundDrawable(photo);
+            }
+        }
+    }
+
+    public static String getPathFromCameraData(Intent data, Context context) {
+        Uri selectedImage = data.getData();
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver().query(selectedImage,
+                filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        return picturePath;
     }
 
     @Override
