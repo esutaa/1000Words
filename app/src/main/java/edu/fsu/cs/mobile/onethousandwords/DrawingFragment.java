@@ -138,7 +138,6 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             public void onClick(View view) {
                 mediaPlayer = new MediaPlayer();
                 try {
-                    record.setEnabled(false);
                     mediaPlayer.setDataSource(savePath);
                     mediaPlayer.prepare();
                 } catch (IOException e) {
