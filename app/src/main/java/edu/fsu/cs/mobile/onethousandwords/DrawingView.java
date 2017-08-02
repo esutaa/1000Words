@@ -16,10 +16,10 @@ import android.view.View;
 
 public class DrawingView extends View{
 
-    private Path drawPath;
-    private Paint drawPaint;
-    private Paint canvasPaint;
-    private int paintColor = 0xFF660000;
+    private Path drawPath;  //draw path
+    private Paint drawPaint;    //drawing paint
+    private Paint canvasPaint;  //canvas paint
+    private int paintColor = 0xFF660000;    //initial color
     private Canvas drawCanvas;
     private Bitmap canvasBitmap;
     private float brushSize, oldBrushSize;
@@ -47,16 +47,20 @@ public class DrawingView extends View{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //finds the path of each stroke
         float touchX = event.getX();
         float touchY = event.getY();
 
         switch (event.getAction()) {
+                //When view is touched, go to that location
             case MotionEvent.ACTION_DOWN:
                 drawPath.moveTo(touchX, touchY);
                 break;
+                //When moving, create path
             case MotionEvent.ACTION_MOVE:
                 drawPath.lineTo(touchX, touchY);
                 break;
+                //Finalize path once they stop and reset for another path
             case MotionEvent.ACTION_UP:
                 drawCanvas.drawPath(drawPath, drawPaint);
                 drawPath.reset();
@@ -65,10 +69,11 @@ public class DrawingView extends View{
                 return false;
         }
 
-        invalidate();
+        invalidate();   //onDraw executes
         return true;
     }
 
+        //set up the drawing view
     public void setupDrawing() {
         brushSize = getResources().getInteger(R.integer.medium_size);
         oldBrushSize = brushSize;
@@ -76,6 +81,7 @@ public class DrawingView extends View{
         drawPath = new Path();
         drawPaint = new Paint();
 
+            //setting path properties
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(brushSize);
         drawPaint.setStyle(Paint.Style.STROKE);

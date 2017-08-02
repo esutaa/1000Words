@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements
             fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance());
         }
         else {
-            fTransaction.add(R.id.fragment_frame, ListFragment.newInstance());
+            fTransaction.add(R.id.fragment_frame, DrawingFragment.newInstance());
         }
 
         fTransaction.commit();
@@ -75,9 +75,9 @@ public class MainActivity extends AppCompatActivity implements
                     Toast.makeText(MainActivity.this, "Registration Failed. Try again?", Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    ListFragment listFragment = new ListFragment();
-                    String tag = ListFragment.class.getCanonicalName();
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, listFragment, tag).commit();
+                    DrawingFragment DrawFragment = new DrawingFragment();
+                    String tag = DrawingFragment.class.getCanonicalName();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, DrawFragment, tag).commit();
                 }
             }
         });
@@ -91,10 +91,10 @@ public class MainActivity extends AppCompatActivity implements
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            ListFragment listFragment = new ListFragment();
-                            String tag = ListFragment.class.getCanonicalName();
+                            DrawingFragment drawFragment = new DrawingFragment();
+                            String tag = DrawingFragment.class.getCanonicalName();
                             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame,
-                                    listFragment, tag).commit();
+                                    drawFragment, tag).commit();
                         }
 
                         else{

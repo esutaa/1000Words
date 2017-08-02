@@ -1,21 +1,29 @@
 package edu.fsu.cs.mobile.onethousandwords;
 
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -26,9 +34,10 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+
+import static android.R.attr.data;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,30 +52,28 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
     private ImageButton play;
     private String savePath = null;
     private Random random;
+    private Button upload;
     private String RandomAudioFileName = "asdfasd";
-    private ImageButton b1;
-    private ImageButton b2;
-    private ImageButton b3;
-    private ImageButton b4;
-    private ImageButton b5;
-    private ImageButton b6;
-    private ImageButton b7;
-    private ImageButton b8;
-    private ImageButton b9;
-    private ImageButton b10;
-    private ImageButton b11;
-    private ImageButton b12;
-    //private Button brushBtn, eraseBtn, newBtn, backBtn;
-  
+        //colors
+    private ImageButton b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12;
+
     private ImageButton brushBtn, eraseBtn, newBtn, saveBtn;
-    Button backBtn, logoutBtn;
+    Button logoutBtn;
+        //brush sizes
     private float smallBrush, medBrush, medBrush2, lgBrush;
     String savedImg;
     FirebaseAuth auth;
-    //ImageButton smallBtn, medBtn, med2Btn, lgBtn;
-    
+
     public DrawingFragment() {
         // Required empty public constructor
+    }
+
+    public static DrawingFragment newInstance() {
+        DrawingFragment fragment = new DrawingFragment();
+        Bundle args = new Bundle();
+
+        fragment.setArguments(args);
+        return fragment;
     }
 
 
@@ -81,9 +88,11 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         currentPaint = (ImageButton) layout.getChildAt(0);
         record = (ImageButton) rootView.findViewById(R.id.record_btn);
         play = (ImageButton) rootView.findViewById(R.id.play_btn);
+        upload = (Button) rootView.findViewById(R.id.upload_btn);
         random = new Random();
         play.setEnabled(false);
 
+            //show what is currently pressed
         currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
 
         record.setOnClickListener(new View.OnClickListener() {
@@ -129,12 +138,23 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             public void onClick(View view) {
                 mediaPlayer = new MediaPlayer();
                 try {
+                    record.setEnabled(false);
                     mediaPlayer.setDataSource(savePath);
                     mediaPlayer.prepare();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 mediaPlayer.start();
+            }
+        });
+
+        upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK,
+                        android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, 0);
             }
         });
 
@@ -169,12 +189,10 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         eraseBtn.setOnClickListener(this);
         newBtn = (ImageButton) rootView.findViewById(R.id.draw_btn);
         newBtn.setOnClickListener(this);
-        backBtn = (Button) rootView.findViewById(R.id.back_btn);
-        backBtn.setOnClickListener(this);
-        saveBtn = (ImageButton) rootView.findViewById(R.id.save_btn);
-        saveBtn.setOnClickListener(this);
         logoutBtn = (Button) rootView.findViewById(R.id.logout_btn);
         logoutBtn.setOnClickListener(this);
+        saveBtn = (ImageButton) rootView.findViewById(R.id.save_btn);
+        saveBtn.setOnClickListener(this);
 
         smallBrush = getResources().getInteger(R.integer.small_size);
         medBrush = getResources().getInteger(R.integer.medium_size);
@@ -186,18 +204,43 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         return rootView;
     }
 
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
+            String path = getPathFromCameraData(data, this.getActivity());
+            Log.i("PICTURE", "Path: " + path);
+            if (path != null) {
+                Toast.makeText(getContext(), path, Toast.LENGTH_LONG).show();
+                Drawable photo = Drawable.createFromPath(path);
+                drawingView.setBackground(photo);
+            }
+        }
+    }
+
+    public static String getPathFromCameraData(Intent data, Context context) {
+        Uri selectedImage = data.getData();
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+        Cursor cursor = context.getContentResolver().query(selectedImage,
+                filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String picturePath = cursor.getString(columnIndex);
+        cursor.close();
+        return picturePath;
+    }
+
     @Override
     public void onClick(View v) {
-        //update color
+        //update color choice
         if ((v != currentPaint) && (v.getId() != R.id.brush_btn) && (v.getId() != R.id.erase_btn)
-                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.back_btn) && (v.getId() != R.id.save_btn)
-                && (v.getId() != R.id.logout_btn)){
-            drawingView.setErase(false);
+                && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.logout_btn) && (v.getId() != R.id.save_btn)){
+            drawingView.setErase(false);    //make sure it's not erasing
+                //if they erased before use previous brush size
             drawingView.setBrushSize(drawingView.getOldBrushSize());
-            ImageButton img = (ImageButton) v;
-            String color = v.getTag().toString();
-            drawingView.setColor(color);
+            ImageButton img = (ImageButton) v;  //get the color
+            String color = v.getTag().toString();   //get tag color
+            drawingView.setColor(color);    //set the color
 
+                //show which color is picked
             img.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.pressed, null));
             currentPaint.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.paint, null));
             currentPaint = (ImageButton) v;
@@ -206,6 +249,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         // Checking for which buttons were used
         if (v.getId() == R.id.brush_btn)
         {
+                //changes brush size for drawing
             final Dialog brushDialog = new Dialog(getActivity());
             brushDialog.setTitle("Brush Size");
             brushDialog.setContentView(R.layout.choose_brush);
@@ -257,6 +301,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             brushDialog.show();
         }
         else if(v.getId() == R.id.erase_btn){
+                //changes brush size for coloring
             final Dialog brushDialog = new Dialog(getActivity());
             brushDialog.setTitle("Eraser Size");
             brushDialog.setContentView(R.layout.choose_brush);
@@ -304,11 +349,13 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             brushDialog.show();
         }
         else if (v.getId() == R.id.draw_btn){
+                //create a new drawing and discard the previous one
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
             alertDialog.setTitle("New Drawing").setMessage("Discard Changes?");
             alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    drawingView.setBackgroundResource(R.color.whitebg);
                     drawingView.newDraw();
                     dialog.dismiss();
                 }
@@ -323,21 +370,24 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
             alertDialog.show();
         }
-        else if (v.getId() == R.id.back_btn){
+        else if (v.getId() == R.id.logout_btn){
+                //logout
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-            alertDialog.setTitle("").setMessage("Go back and discard changes?");
+            alertDialog.setTitle("").setMessage("Logout and discard changes?");
             alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    FragmentManager fm = getActivity().getSupportFragmentManager();
-                    fm.popBackStackImmediate();
+                    auth.signOut();
+                    LoginFragment loginFragment = new LoginFragment();
+                    String tag = LoginFragment.class.getCanonicalName();
+                    getFragmentManager().beginTransaction().replace(R.id.fragment_frame, loginFragment, tag).commit();
                 }
             });
-
             alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.cancel();
+
                 }
             });
 
@@ -397,29 +447,6 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
             alertDialog.show();
         }
-
-        else if (v.getId() == R.id.logout_btn) {
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-            alertDialog.setTitle("").setMessage("Go back and discard changes?");
-            alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    auth.signOut();
-                    LoginFragment loginFragment = new LoginFragment();
-                    String tag = LoginFragment.class.getCanonicalName();
-                    getFragmentManager().beginTransaction().replace(R.id.fragment_frame, loginFragment, tag).commit();
-                }
-            });
-
-            alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            alertDialog.show();
-        }
     }
 
     // Function gets URI of file
@@ -443,6 +470,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         return stringBuilder.toString();
     }
 
+        //make sure the necessary permissions are granted
     public boolean permission(){
         int res1 = ContextCompat.checkSelfPermission(getContext(),
                 "android.permission.WRITE_EXTERNAL_STORAGE");
@@ -452,6 +480,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         return (res1 == PackageManager.PERMISSION_GRANTED) && (res2 == PackageManager.PERMISSION_GRANTED);
     }
 
+        //request permission if not granted
     private void requestPermission(){
         ActivityCompat.requestPermissions(getActivity(),
                 new String[]{"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.RECORD_AUDIO"},
