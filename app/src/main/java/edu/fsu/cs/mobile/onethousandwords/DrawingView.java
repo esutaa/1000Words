@@ -38,13 +38,21 @@ public class DrawingView extends View{
         drawCanvas = new Canvas(canvasBitmap);
     }
 
+    /*
+        Initiates the DrawView in the DrawingFragment
+     */
+
     @Override
     protected void onDraw(Canvas canvas) {
-        // draw view
         canvas.drawBitmap(canvasBitmap, 0, 0, canvasPaint);
         canvas.drawPath(drawPath, drawPaint);
     }
 
+
+    /* This function handles the motion events caused by the user and activates the methods
+        needed for the drawing to work. The handling is done with a switch that changes
+        when the user is on the screen, moves, or removes their finger.
+    */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float touchX = event.getX();
@@ -69,6 +77,10 @@ public class DrawingView extends View{
         return true;
     }
 
+    /*
+        This method sets up the drawing styles for which we wanted to use in our DrawingView
+     */
+
     public void setupDrawing() {
         brushSize = getResources().getInteger(R.integer.medium_size);
         oldBrushSize = brushSize;
@@ -85,12 +97,26 @@ public class DrawingView extends View{
         canvasPaint = new Paint(Paint.DITHER_FLAG);
     }
 
+    /*
+        This method is called in the DrawingFragment when the user selects an imageButton that
+        represents a color. The color is represented by a hexcode that is parsed here, and sets
+        our Paint object to it.
+     */
+
     public void setColor(String newColor){
         invalidate();
 
         paintColor = Color.parseColor(newColor);
         drawPaint.setColor(paintColor);
     }
+
+    /*
+        This method is called in the DrawingFragment for when the user selects a brush size
+        the float value that is sent in is defined by us in an XML file called dimens.xml.
+        The value is sent and applied by the TypeValue.applyDimension method and the return value
+        is the converted amount of pixels that represent the brush size selected. The Paint object
+        is the set to the brush size selected.
+     */
 
     public void setBrushSize(float newBrushSize){
         float pixel = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, newBrushSize,
@@ -99,6 +125,10 @@ public class DrawingView extends View{
         drawPaint.setStrokeWidth(brushSize);
     }
 
+    /*
+        This method allowed for easy changes between new and old brushes by the user.
+     */
+
     public void setOldBrushSize(float lastSize){
         oldBrushSize = lastSize;
     }
@@ -106,6 +136,11 @@ public class DrawingView extends View{
     public float getOldBrushSize(){
         return oldBrushSize;
     }
+
+    /*
+        The setErase function handles changing the transfer-method that is set to
+        PorterDuff.Mode.Clear which effectively erases the paint that is selected.
+     */
 
     public void setErase(boolean boolErase){
         erase = boolErase;
@@ -117,6 +152,7 @@ public class DrawingView extends View{
             drawPaint.setXfermode(null);
         }
     }
+
 
     public void newDraw(){
         drawCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
