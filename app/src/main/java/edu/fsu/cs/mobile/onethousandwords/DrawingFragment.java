@@ -30,10 +30,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class DrawingFragment extends Fragment implements View.OnClickListener{
+
     private DrawingView drawingView;
     private ImageButton currentPaint;
     private MediaPlayer mediaPlayer;
