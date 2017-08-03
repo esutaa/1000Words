@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements
         if (auth.getCurrentUser() == null) {
             fTransaction.add(R.id.fragment_frame, LoginFragment.newInstance());
         }
-        else {
+        else {  // If not, go to fragment for user
             fTransaction.add(R.id.fragment_frame, DrawingFragment.newInstance());
         }
 
@@ -70,11 +70,11 @@ public class MainActivity extends AppCompatActivity implements
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (!task.isSuccessful()) {
+                if (!task.isSuccessful()) {     // Checking if registration failed
                     Log.d("MainActivity", "onComplete: Failed=" + task.getException().getMessage());
                     Toast.makeText(MainActivity.this, "Registration Failed. Try again?", Toast.LENGTH_SHORT).show();
                 }
-                else {
+                else {  // If not, go to DrawingFragment
                     DrawingFragment DrawFragment = new DrawingFragment();
                     String tag = DrawingFragment.class.getCanonicalName();
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_frame, DrawFragment, tag).commit();
@@ -97,23 +97,12 @@ public class MainActivity extends AppCompatActivity implements
                                     drawFragment, tag).commit();
                         }
 
-                        else{
+                        else{   // Checking if login failed
                             Log.d("MainActivity", "onComplete: Failed=" + task.getException().getMessage());
                             Toast.makeText(MainActivity.this, "Login failed. Try again?", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-    }
-
-    // Function signs user out, returning to log in page
-    private void SignOut() {
-        auth.signOut();
-        LoginFragment loginFragment = new LoginFragment();
-        String tag = DrawingFragment.class.getCanonicalName();
-        this.getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_frame, loginFragment, tag)
-                .addToBackStack("Login")
-                .commit();
     }
 
 }
