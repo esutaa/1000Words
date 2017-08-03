@@ -236,7 +236,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
-        //update color choice
+        //Checking to see which color button was chosen to update color choice
         if ((v != currentPaint) && (v.getId() != R.id.brush_btn) && (v.getId() != R.id.erase_btn)
                 && (v.getId() != R.id.draw_btn) && (v.getId() != R.id.logout_btn) && (v.getId() != R.id.save_btn)){
             drawingView.setErase(false);    //make sure it's not erasing
@@ -377,7 +377,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             alertDialog.show();
         }
         else if (v.getId() == R.id.logout_btn){
-                //logout
+                //Logs the user out and goes back to the login page
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
             alertDialog.setTitle("").setMessage("Logout and discard changes?");
             alertDialog.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
@@ -431,9 +431,6 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
 
                     // Displaying to user if file was saved successfully
                     if(savedImg != null) {
-                        /*StorageReference storageRef = FirebaseStorage.getReference().child("Users").
-                            child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        storageRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).putFile(savedImg);*/
                         Toast.makeText(getActivity(), "Drawing saved!", Toast.LENGTH_SHORT).show();
                         drawingView.destroyDrawingCache();  // Deleting cache so cache not the same for future files
                     }
