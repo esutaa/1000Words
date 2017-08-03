@@ -99,6 +99,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View view) {
 
+                // if audio is recording, change button to stop and begin recording
                 if (permission()) {
                     if (playing) {
                         play.setEnabled(true);
@@ -120,19 +121,21 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    } else {
+
+                    } else {    // set button to record if recording has stopped
                         record.setImageResource(R.drawable.record);
                         mediaRecorder.stop();
                     }
 
                     playing = !playing;
                 }
-                else {
+                else {  // call function to request runtime permissions
                     requestPermission();
                 }
             }
         });
 
+        // playback button onClick listener - opens recording filepath in media player
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,6 +150,7 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+        // onClick listener for upload - prompts user to select photo from gallery
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,18 +207,21 @@ public class DrawingFragment extends Fragment implements View.OnClickListener{
         return rootView;
     }
 
+    // onClick listener for upload button calls this
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0 && resultCode == Activity.RESULT_OK) {
             String path = getPathFromCameraData(data, this.getActivity());
             Log.i("PICTURE", "Path: " + path);
+
+            // converts selected gallery photo to a drawable and sets as background
             if (path != null) {
-                Toast.makeText(getContext(), path, Toast.LENGTH_LONG).show();
                 Drawable photo = Drawable.createFromPath(path);
                 drawingView.setBackground(photo);
             }
         }
     }
 
+    // helper function for gallery selection
     public static String getPathFromCameraData(Intent data, Context context) {
         Uri selectedImage = data.getData();
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
